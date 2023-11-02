@@ -8,7 +8,7 @@
 
 # Runtime 版本
 
-编译 runtime 时，节点将生成 原生二进制文件 和 WebAssembly 二进制文件。您可以使用不同的命令行执行方法来控制在区块生成过程中使用哪一个二进制文件。选择 runtime 执行环境的组件称为执行器。 尽管您可以自定义不同的执行策略来覆盖默认选项，但在大多数情况下，执行程序通过评估本机和 WebAssembly runtime二进制文件的以下信息来选择最恰当的二进制文件：
+编译 runtime 时，节点将生成 原生二进制文件 和 WebAssembly 二进制文件。您可以使用不同的命令行执行方法来控制在区块生成过程中使用哪一个二进制文件。选择 runtime 执行环境的组件称为执行器。 尽管您可以自定义不同的执行策略来覆盖默认选项，但在大多数情况下，执行程序通过评估本机和 WebAssembly runtime 二进制文件的以下信息来选择最恰当的二进制文件：
 
 - [`spec_name`](https://paritytech.github.io/substrate/master/sc_cli/struct.RuntimeVersion.html#structfield.spec_name)
 - [`spec_version`](https://paritytech.github.io/substrate/master/sc_cli/struct.RuntimeVersion.html#structfield.spec_version)
