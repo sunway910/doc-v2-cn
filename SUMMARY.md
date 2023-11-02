@@ -34,7 +34,7 @@
     * [构建存在证明 dApp (ink!)](developer/tutorials/poe-ink.md)
     * [构建存在证明 dApp (Solidity)](developer/tutorials/poe-solidity.md)
   * [指南](developer/guides/README.md)
-    * [测试网水笼头](developer/guides/testnet-faucet.md)
+    * [测试网水龙头](developer/guides/testnet-faucet.md)
     * [常用开发库](developer/guides/common-libs.md)
     * [Substrate 与 EVM 帐户转换](developer/guides/substrate-evm.md)
     * [CESS 代码介绍](developer/guides/src-overview.md)
