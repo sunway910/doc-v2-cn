@@ -2,7 +2,7 @@
 
 尽管这些输入会根据时间和空间而变化，但在世界各地的特定区块链的所有节点中获得相同的结果是不可能的。如果节点获得不同的输入来构建区块，分叉就会发生。现实世界的熵不适合用作区块链随机性的种子。
 
-目前生产环境下区块链随机性主要有两种方法：[**RANDAO**](https://github.com/randao/randao#solutions) 和 [**可验证随机函数**](https://en.wikipedia.org/wiki/Verifiable_random_function) (Verifiable Random Function, 简称：VRF)。
+目前生产环境下区块链随机性主要有两种方法：[**RANDAO**](https://github.com/randao/randao#solutions) 和[**可验证随机函数**](https://en.wikipedia.org/wiki/Verifiable_random_function) (Verifiable Random Function, 简称：VRF)。
 
 CESS 使用的是 VRF。
 
@@ -28,4 +28,4 @@ Slot 是长度为 6 秒的离散时间单位。每个 slot 可以包含一个区
 
 然后将 RESULT 与协议实现中定义的阈值进行比较（具体来说，在 CESS 主机内）。如果该值小于阈值，则掷出该数字的验证者是该时隙的可行区块生产候选者。验证者然后尝试创建一个区块，并将此区块连同先前获得的 PROOF 和 RESULT 一起提交到网络中。在 VRF 下，每个验证者都为自己掷出一个数字，将其与阈值进行比较，并在随机掷出的数字低于该阈值时产生一个区块。
 
-由于这种工作方式，某些 slot 可能没有验证者作为区块生产候选人，因为所有验证者候选人都掷出了太高的数字并错过了阈值。我们在 [共识机制章节](consensus.md 澄清了如何解决这个问题，并确保区块时间保持近似恒定时间。
+由于这种工作方式，某些 slot 可能没有验证者作为区块生产候选人，因为所有验证者候选人都掷出了太高的数字并错过了阈值。我们在[共识机制章节](consensus.md)澄清了如何解决这个问题，并确保区块时间保持近似恒定时间。
