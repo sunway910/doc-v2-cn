@@ -10,7 +10,7 @@
 
 # 指南
 
-- [测试网水笼头](guides/testnet-faucet.md)
+- [测试网水龙头](guides/testnet-faucet.md)
 - [常用开发库](guides/common-libs.md)
 - [Substrate 与 EVM 帐户转换](guides/substrate-evm.md)
 - [CESS 代码介绍](guides/src-overview.md)
