@@ -7,14 +7,14 @@
 您需要准备以下内容才能将 Solidity 智能合约成功部署到 CESS。
 
 - **MetaMask**：需要获取以太坊地址并连接到 CESS 链
-- **CESS 钱包帐号**：如还没有 CESS 帐号，查看[这篇文档](../../community/cess-account.md) 看如何创建帐号，并从 [测试水笼头](../guides/testnet-faucet.md) 取得测试代币。
+- **CESS 钱包帐号**：如还没有 CESS 帐号，查看[这篇文档](../../community/cess-account.md)看如何创建帐号，并从 [测试水龙台](../guides/testnet-faucet.md) 取得测试代币。
 - **Remix IDE**[：Remix IDE](https://remix.ethereum.org/)，在线 IDE 能开发、编译智能合约，并将其部署到链上。
 - **访问 CESS 节点**：确保该节点允许 MetaMask 访问
 
 通过以下步骤，您将了解如何在 CESS 链上部署 Solidity 合约。
 
 {% hint style="info" %}
-这个教程涉及在 CESS 测试链上使用EVM。如果你理解 [Substrate 和 EVM 地址转换](../guides/substrate-evm.md) 背后的逻辑和机制，你会更好的理解本文的操作及原因。
+这个教程涉及在 CESS 测试链上使用 EVM。如果你理解 [Substrate 和 EVM 地址转换](../guides/substrate-evm.md) 背后的逻辑和机制，你会更好的理解本文的操作及原因。
 {% endhint %}
 
 # 将 CESS 网络添加到 MetaMask
@@ -122,16 +122,16 @@
   </tr>
 </table>
 
-在 [CESS 浏覧器: Developer RPC calls](https://testnet.cess.cloud/#/rpc) 内确认智能合约帐户余额。使用上一步中的以太坊地址。
+在 [CESS 浏览器: Developer RPC calls](https://testnet.cess.cloud/#/rpc) 内确认智能合约帐户余额。使用上一步中的以太坊地址。
 
-![CESS 浏覧器: 查看余额](../../assets/developer/tutorials/deploy-sc-solidity/16.png)
+![CESS 浏览器: 查看余额](../../assets/developer/tutorials/deploy-sc-solidity/16.png)
 
 # 将余额提取至 CESS 账户
 
 要将以太坊账户中的余额提取到 CESS 账户，请按照路线 **Developer => Extrinsics => evm => withdraw**。
 
-![CESS 浏覧器: 发送 evm:withdraw 交易](../../assets/developer/tutorials/deploy-sc-solidity/17.png)
+![CESS 浏览器: 发送 evm:withdraw 交易](../../assets/developer/tutorials/deploy-sc-solidity/17.png)
 
-在 CESS 浏覧器内的 **Accounts** 页内验证帐户余额。
+在 CESS 浏览器内的 **Accounts** 页内验证帐户余额。
 
-![CESS 浏覧器: 更新帐户](../../assets/developer/tutorials/deploy-sc-solidity/18.png)
+![CESS 浏览器: 更新帐户](../../assets/developer/tutorials/deploy-sc-solidity/18.png)
