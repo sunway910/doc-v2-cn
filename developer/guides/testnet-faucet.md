@@ -2,11 +2,11 @@
 
 CESS 测试网已上线。您可以通过 <https://substats.cess.cloud> 访问 CESS 区块链浏览器。
 
-要在 CESS 测试网上部署应用程序，您将需要一些测试网代币。您可以在我们的 [**测试网水笼头**](https://cess.cloud/faucet.html) 获取测试网代币。
+要在 CESS 测试网上部署应用程序，您将需要一些测试网代币。您可以在我们的 [**测试网水龙头**](https://cess.cloud/faucet.html) 获取测试网代币。
 
 ## 程序
 
-1. 打开我们的 [**测试网水笼头**](https://cess.cloud/faucet.html) 页. 您可以看到以下内容。<br/>
+1. 打开我们的 [**测试网水龙头**](https://cess.cloud/faucet.html) 页. 您可以看到以下内容。<br/>
 
     ![测试网水笼头](../../assets/developer/guides/testnet-faucet/01-faucet-screen.png)
 
