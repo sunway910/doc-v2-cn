@@ -1,6 +1,6 @@
 在 CESS 生态系统中，有五种类型的角色，共同维护 CESS 网络的稳定、安全、活跃和可持续发展。一个用户可以（通常也会）担任多个角色。这五种角色包括：
 
-1. **社区成员**：他们参与 CESS 活动，关注 CESS 新闻，并加入 [Discord 频道](https://discord.gg/cess) 与其他社区成员互动。其中一个关键参与方式是持有 CESS 代币，参与 CESS DAO 提案投票，从而为项目治理做出贡献。
+1. **社区成员**：他们参与 CESS 活动，关注 CESS 新闻，并加入 [Discord 频道](https://discord.gg/cess)与其他社区成员互动。其中一个关键参与方式是持有 CESS 代币，参与 CESS DAO 提案投票，从而为项目治理做出贡献。
 
    👉 [社区成员](community/README.md)
 
