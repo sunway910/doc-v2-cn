@@ -118,13 +118,13 @@ df -h
 
 ```bash
 wget https://github.com/CESSProject/cess-nodeadm/archive/v0.5.0.tar.gz
-tar -xvf v0.5.0.tar.gz
-cd cess-nodeadm-0.5.0/
+tar -xvf v0.5.1.tar.gz
+cd cess-nodeadm-0.5.1/
 ./install.sh
 ```
 
 {% hint style="info" %}
-检查您使用的是否 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 的 `cess-nodeadm`。目前是**v0.4.4**。
+检查您使用的是否 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 的 `cess-nodeadm`。目前是**v0.5.1**。
 {% endhint %}
 
 如果出现该条消息—— `Install cess nodeadm success`，则表示安装成功。
