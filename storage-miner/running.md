@@ -117,14 +117,14 @@ df -h
 # 安装 CESS 客户端
 
 ```bash
-wget https://github.com/CESSProject/cess-nodeadm/archive/v0.4.4.tar.gz
-tar -xvf v0.4.4.tar.gz
-cd cess-nodeadm-0.4.4/
+wget https://github.com/CESSProject/cess-nodeadm/archive/v0.5.0.tar.gz
+tar -xvf v0.5.1.tar.gz
+cd cess-nodeadm-0.5.1/
 ./install.sh
 ```
 
 {% hint style="info" %}
-检查您使用的是否 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 的 `cess-nodeadm`。目前是**v0.4.4**。
+检查您使用的是否 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 的 `cess-nodeadm`。目前是**v0.5.1**。
 {% endhint %}
 
 如果出现该条消息—— `Install cess nodeadm success`，则表示安装成功。
@@ -144,6 +144,8 @@ Enter cess bucket income account: cXiHsw32kT3Fzw6YeXDTECCfFNKjDVg85eg......
 Enter cess bucket signature phrase: shoe ...... creek metal avoid
 Enter cess bucket disk path (default: /opt/cess/storage/disk): /cess
 Enter cess bucket space, by GB unit (current: 300, press enter to skip): 1000
+Enter the number of CPU cores used for mining; Your CPU cores are 4
+  (current: 3, 0 means all cores are used; press enter to skip): 2
 Set configurations successfully
 ```
 
@@ -274,7 +276,7 @@ cd cess-nodeadm-<new-version>
 ./install.sh --skip-dep
 ```
 
-目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags)是 **v0.4.4** 。
+目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags)是 **v0.5.1** 。
 
 ## 拉取镜像
 
