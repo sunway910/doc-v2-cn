@@ -276,7 +276,7 @@ cd cess-nodeadm-<new-version>
 ./install.sh --skip-dep
 ```
 
-目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags)是 **v0.5.0** 。
+目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags)是 **v0.5.1** 。
 
 ## 拉取镜像
 
