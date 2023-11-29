@@ -128,6 +128,7 @@ docker.io/cesslab/kaleido-kafka:latest
 pull images finished
 ```
 配置终端节点时请填入您的TEE Worker服务器地址，默认是当前服务器，如果您还不清楚TEE Worker，请参考[节点角色介绍](../concepts/node-roles.md)。
+
 如果配置过程失败，请参考[故障排除指南](../storage-miner/troubleshooting.md)。
 
 # 管理验证节点生命周期
