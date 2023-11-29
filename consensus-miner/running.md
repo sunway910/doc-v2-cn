@@ -62,14 +62,14 @@ Value bonded：建议 300,000 TCESS。在 _payment destination_ 选择第二个�
 `cess-nodeadm` 是一个 CESS 节点部署和管理程序，有助于部署和管理存储节点、共识节点和全节点，以简化所有 CESS 矿工的开发运营。
 
 ```bash
-wget https://github.com/CESSProject/cess-nodeadm/archive/v0.4.4.tar.gz
-tar -xvf v0.4.4.tar.gz
-cd cess-nodeadm-0.4.4
+wget https://github.com/CESSProject/cess-nodeadm/archive/v0.5.1.tar.gz
+tar -xvf v0.5.1.tar.gz
+cd cess-nodeadm-0.5.1
 sudo ./install.sh
 ```
 
 {% hint style="info" %}
-请检查您是否使用的是[最新版本的 `cess-nodeadm`](https://github.com/CESSProject/cess-nodeadm/tags)。目前是 **v0.4.4**。
+请检查您是否使用的是[最新版本的 `cess-nodeadm`](https://github.com/CESSProject/cess-nodeadm/tags)。目前是 **v0.5.1**。
 {% endhint %}
 
 如果出现 `Install cess nodeadm success` 消息，则表示安装成功。
@@ -127,6 +127,7 @@ Status: Image is up to date for cesslab/kaleido-kafka:latest
 docker.io/cesslab/kaleido-kafka:latest
 pull images finished
 ```
+配置终端节点时请填入您的TEE Worker服务器地址，默认是当前服务器，如果您还不清楚TEE Worker，请参考[节点角色介绍](../concepts/node-roles.md)。
 如果配置过程失败，请参考[故障排除指南](../storage-miner/troubleshooting.md)。
 
 # 管理验证节点生命周期
@@ -297,7 +298,7 @@ cd cess-nodeadm-<new-version>
 ./install.sh --skip-dep
 ```
 
-目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 是 **v0.4.4**.
+目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 是 **v0.5.1**.
 
 ## 拉取镜像
 
