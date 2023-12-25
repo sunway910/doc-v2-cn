@@ -109,32 +109,55 @@ df -h
 
 矿工需要创建两个钱包账户。
 
-- **收益账户**：用于获取挖矿奖励。
-- **质押账户**：用于质押和签署区块链交易。
+- **收益账户**：用于接收挖矿获得的奖励。
+- **质押账户**：用于支付存储节点的质押费用。
+- **签名账户**：用于签名区块链交易。 如果没有指定质押账户，该账户也将用于支付质押费用。
 
 请参阅 [CESS 帐户](../community/cess-account.md) 创建 CESS 帐户，然后前往 [CESS 水龙头](https://cess.cloud/faucet.html) 获取测试代币 TCESS，或 [联系我们](../introduction/contact.md) 寻求帮助。
 
 # 安装 CESS 客户端
-
+1. Check for the latest version at：https://github.com/CESSProject/cess-nodeadm/tag
+```
+⚠️ According to the latest version number, replace the following x.x.x
+```
+2. Download and install
 ```bash
-wget https://github.com/CESSProject/cess-nodeadm/archive/v0.5.0.tar.gz
-tar -xvf v0.5.1.tar.gz
-cd cess-nodeadm-0.5.1/
+wget https://github.com/CESSProject/cess-nodeadm/archive/vx.x.x.tar.gz
+tar -xvf vx.x.x.tar.gz
+cd cess-nodeadm-x.x.x/
 ./install.sh
 ```
-
-{% hint style="info" %}
-检查您使用的是否 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 的 `cess-nodeadm`。目前是**v0.5.1**。
-{% endhint %}
 
 如果出现该条消息—— `Install cess nodeadm success`，则表示安装成功。
 
 如果安装失败，请查看 [故障排除步骤](./troubleshooting.md)。
 
+## 停止并移除旧服务
+停止旧的服务：
+```
+cess stop
+```
+或者
+```
+cess down
+```
+移除旧的服务：
+```
+cess purge
+```
+
 ## 配置 CESS 客户端
+### 设置网络环境
+切换到CESS开发网：
+```
+cess profile devtnet
+```
+切换到CESS测试网：
+```
+cess profile testnet
+```
 
-运行 `cess config set`
-
+### 配置配置文件
 ```bash
 $ cess config set
 
@@ -269,15 +292,13 @@ cess purge
 ## 更新 `cess-nodeadm`
 
 ```bash
-wget https://github.com/CESSProject/cess-nodeadm/archive/<new-version>.tar.gz
-tar -xvf <new-version>.tar.gz
+wget https://github.com/CESSProject/cess-nodeadm/archive/vx.x.x.tar.gz
+tar -xvf vx.x.x.tar.gz
 
-cd cess-nodeadm-<new-version>
+cd cess-nodeadm-x.x.x
 
 ./install.sh --skip-dep
 ```
-
-目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags)是 **v0.5.1** 。
 
 ## 拉取镜像
 
