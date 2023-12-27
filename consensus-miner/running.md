@@ -15,7 +15,9 @@
 {% hint style="info" %}
 ### SGX 支持
 
-CPU 必须支持 [Intel Software Guard Extensions](https://www.intel.com/content/www/us/en/architecture-and-technology/software-guard-extensions.html) 及 Flexible Launch Control (FLC)。BIOS 必须支持 Intel SGX，并且必须启用 Intel SGX 选项。请参阅服务器制造商的 BIOS 指南以启用 SGX 功能。这里查看[支持 SGX 的 CPU 型号](https://ark.intel.com/content/www/us/en/ark/search/featurefilter.html?productType=873&2_SoftwareGuardExtensions=Yes)，包括 _Intel ME_，_Intel SPS_，或者 _同时是 Intel ME 和 Intel SPS_。
+CPU 必须支持 [Intel Software Guard Extensions](https://www.intel.com/content/www/us/en/architecture-and-technology/software-guard-extensions.html) 及 Flexible Launch Control (FLC)。BIOS 必须支持 Intel SGX，并且必须启用 Intel SGX 选项。请参阅服务器制造商的 BIOS 指南以启用 SGX 功能。这里查看[支持 SGX 的 CPU 型号](https://ark.intel.com/content/www/us/en/ark/search/featurefilter.html?productType=873&2_SoftwareGuardExtensions=Yes)，包括 _Intel ME_，_Intel SPS_，或者 _同时是 Intel ME 和 Intel SPS_。</br>
+*`CPU推荐型号：Intel E、E3、Celeron(部分型号)、Core系列CPU，其中Intel Core i5-10500最佳。`*</br>
+*`主板BIOS推荐：supermicro等主流厂商`*
 
 ### 固网 IP
 
@@ -28,16 +30,24 @@ curl ifconfig.co
 
 # 准备 CESS 账户
 
-运行存储验证器需要两个帐户。
+## 决定您以哪种身份运行共识矿工
+CESSv0.7.6版本后，用户可以选择以下身份运行共识矿工：
+- **Full**：全节点具有全部的功能，用于兼容现有的TEE Worker类型，需要`绑定共识节点`进行注册；
+- **Verifier**：验证型节点主要处理闲置和服役随机挑战，该类型必须`绑定共识节点`进行注册；
+- **Marker**：认证型节点用于为用户服役文件计算Tag，处理闲置密钥生成，闲置认证和闲置替换工作，该类型可单独进行注册，服务于指定存储节点集群，***以该身份运行共识节点不增加信誉积分***；
 
+以`Full`和`Verifier`运行共识矿工需要两个帐户。
 - **Stash 帐户**: 需要至少从节点所有者或其他用户委托质押 300,000 TCESS 才能运行共识验证器。
 - **Controller 帐户**: 需要至少 100 TCESS 来支付 Gas 费。
+
+以`Marker`运行共识矿工需要一个账户。
+- **Controller 帐户**: 仅需一笔用于注册交易的Gas费。
 
 请参阅[创建 CESS 账户](../community/cess-account.md)，及前往[CESS 水龙头](https://cess.cloud/faucet.html)获取 TCESS，或[联系我们](../introduction/contact.md)获取 TCESS 代币进行质押。
 
 创建钱包帐户后，导航至[CESS 浏览器](https://testnet.cess.cloud/)。
 
-## 为 Stash 帐户绑定资金
+## 为 Stash 帐户绑定资金(绑定共识节点)
 
 选择 **Network** ，点击 **Staking** > **Accounts** > **Stash**
 
@@ -84,50 +94,59 @@ sudo ./install.sh
 cess config set
 ```
 
-你应该看到类似下面的输出:
+下面是以`Full`身份运行矿工的操作示例:</br>
+*`tips:当current默认值合适时，您可以按回车键跳过`*
 
 ```bash
-Enter cess node mode from 'authority/storage/watcher' (current: authority, press enter to skip):
-Enter cess node name (current: cess, press enter to skip):
-Enter external ip for the machine (current: xxx.., press enter to skip):
-Enter cess chain ws url (current:ws://172.18.0.9:9944, press enter to skip):
-Enter cess scheduler stash account (current: xxx.., press enter to skip):
-Enter cess scheduler controller phrase (current: xxx.., press enter to skip):
+Enter cess node mode from 'authority/storage/watcher' (current: authority, press enter to skip): authority
+Begin install sgx_enable ...
+Intel SGX is already enabled on this system
+Enter cess node name (current: cess, press enter to skip): cess
+Enter cess chain ws url (default: ws://cess-chain:9944):
+Enter listener port for kaleido (current: 10010, press enter to skip):
 Start configuring the endpoint to access kaleido from the Internet
   Try to get your external IP ...
-Enter the kaleido endpoint (current: http://221.122.79.3:10010, press enter to skip): 
+##此步骤会自动检测您机器IP，若自动检测不正确请您将正确的http://ip:port填入，其中port为上一步您设置的值，当然您也可以将endpoint设置为域名。
+Enter the kaleido endpoint (current: http://221.122.79.3:10010, press enter to skip):
+##current为null代表为空，当您想成为Marker的时候可以直接回车跳过
+Enter cess validator stash account (current: null, press enter to skip): cXic3WhctsJ9cExmjE9vog49xaLuVbDLcFi2odeEnvV5Sbq4f
+Enter what kind of tee worker would you want to be [Full/Verifier]: Full
+Enter cess validator controller phrase: xxxxxxxxxxxxxx
+❤️  Help us improve TEE Worker with anonymous crash reports & basic usage data? (y/n) : y
 Set configurations successfully
-
-Intel SGX is already enabled on this system
 Start generate configurations and docker compose file
 debug: Loading config file: config.yaml
 info: Generating configurations done
 info: Generating docker compose file done
-57ea8c914461c3184ddb......
+e1f4b19325de7526801573bc31e04e3aa54cbac7af1971c2be83f8da0c16e85c
 Configurations generated at: /opt/cess/nodeadm/build
 try pull images, node mode: authority
-download image: cesslab/cess-chain:latest
-latest: Pulling from cesslab/cess-chain
-3b65ec22a9e9: Already exists
-6e4a9a61f489: Pull complete
-Digest: sha256:5652dce2bd28796......
-Status: Downloaded newer image for cesslab/cess-chain:latest
-docker.io/cesslab/cess-chain:latest
-download image: cesslab/kaleido:latest
-latest: Pulling from cesslab/kaleido
-Digest: sha256:49899acaafd11982......
-Status: Image is up to date for cesslab/kaleido:latest
-docker.io/cesslab/kaleido:latest
-download image: cesslab/kaleido-rotator:latest
-latest: Pulling from cesslab/kaleido-rotator
-Digest: sha256:42535077af6bf......
-Status: Image is up to date for cesslab/kaleido-rotator:latest
-docker.io/cesslab/kaleido-rotator:latest
-download image: cesslab/kaleido-kafka:latest
-latest: Pulling from cesslab/kaleido-kafka
-Digest: sha256:29ed986ea......
-Status: Image is up to date for cesslab/kaleido-kafka:latest
-docker.io/cesslab/kaleido-kafka:latest
+download image: cesslab/cess-chain:testnet
+testnet: Pulling from cesslab/cess-chain
+96d54c3075c9: Already exists
+224698f4f3fe: Already exists
+fe59e467d907: Pull complete
+4f4fb700ef54: Pull complete
+Digest: sha256:39821a9755ecc0c8901809e8a29454ec618ac73592818d3829abdf73ded4e89e
+Status: Downloaded newer image for cesslab/cess-chain:testnet
+docker.io/cesslab/cess-chain:testnet
+download image: cesslab/kaleido:testnet
+testnet: Pulling from cesslab/kaleido
+01085d60b3a6: Already exists
+75b070fa4d64: Already exists
+e0b98820ba1b: Pull complete
+28557caa1da0: Pull complete
+Digest: sha256:6d5c7b74a98208acc8a10ab833eef6c9a6977ed9b82e98aa08cdba732dd5ac05
+Status: Downloaded newer image for cesslab/kaleido:testnet
+docker.io/cesslab/kaleido:testnet
+download image: cesslab/kaleido-rotator:testnet
+testnet: Pulling from cesslab/kaleido-rotator
+96526aa774ef: Already exists
+5c097a021ba1: Already exists
+ff32bfaa56d6: Pull complete
+Digest: sha256:7b0b1c04942d92cd69cac2a01f29ea7a889f9c5784c6af847152b8818fc946e5
+Status: Downloaded newer image for cesslab/kaleido-rotator:testnet
+docker.io/cesslab/kaleido-rotator:testnet
 pull images finished
 ```
 配置终端节点时请填入您的TEE Worker服务器地址，默认是当前服务器，如果您还不清楚TEE Worker，请参考[节点角色介绍](../concepts/node-roles.md)。
@@ -256,7 +275,6 @@ $ cess status
  NAMES           STATUS
 kld-agent       Up 2 minutes
 kld-sgx         Up 2 minutes
-kaleido-kafka   Up 2 minutes
 chain           Up 2 minutes
 watchtower      Up 2 minutes
 -----------------------------------------
@@ -302,10 +320,37 @@ cd cess-nodeadm-<new-version>
 ./install.sh --skip-dep
 ```
 
-目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 是 **v0.5.1**.
+目前 [最新版本](https://github.com/CESSProject/cess-nodeadm/tags) 是 **v0.5.3**适配的CESS版本为v0.7.6。
 
 ## 拉取镜像
 
 ```bash
 cess pullimg
 ```
+
+# 问题&&解答
+
+**Q**：我并不想将自己的IP地址暴露在链上该怎么做？</br>
+**A**：您可以在`cess config set`过程中设置自己endpoint的时候将域名加入，例如您注册的域名为tee-xxx.cess.cloud，那么您可以在设置endpoint的时候填入http://tee-xxx.cess.cloud，随后脚本将询问您是否一键代理域名，您可以输入`y`实现一键代理，示例如下：
+```bash
+.....
+Enter the kaleido endpoint (current: http://tee-xxx.cess.cloud, press enter to skip): http://tee-xxx.cess.cloud
+Do you need to configure a domain name proxy with one click? (y/n): y
+.....
+```
+当然您也可以自行配置nginx代理，请不要使用域名服务商的中间代理。
+
+**Q**：我怎么知道程序有没有正常工作？</br>
+**A**：您可以在区块浏览器中选择`Chain State`，通过该方法您可以查询到是否注册成功
+![check-register](../assets/consensus-miner/qa/check-register.png)
+
+**Q**：不想自动跟新程序该怎么做？</br>
+**A**：在程序完全启动成功后，会有一个`watchtower`的服务代替用户代替用户管理本地服务，当CESS官方对某个组件进行更新的时候，`watchtower`将会拉取最新的程序自动升级，如果您不想使用自动升级功能，您可以在进行`cess config set`之前，使用如下命令禁止自动更新。
+``` bash
+##禁止更新kld-sgx服务，当您选择禁止自动更新kld-sgx而选择手动更新时，更新过程中请删除/opt/cess/authority/kaleido/key/encrypted/podr2_key内文件。
+cess tools no_watchs kld-sgx
+
+##禁止更新kld-agent服务
+cess tools no_watchs kld-agent
+```
+您的每一次自动升级都意味着官方对共识矿工程序的bug修复，我们**非常不建议**您关闭自动升级功能，这可能导致您的服务**不可用**！
