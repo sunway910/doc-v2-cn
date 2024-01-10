@@ -61,6 +61,8 @@ Set configurations successfully
 ```
 在设置validator stash account账户时，填入null后自动配置为Marker模式，然后再输入controller账户（用于TEE Worker注册，发送交易等功能的工作账户）助记词（账户seed）即可完成配置。然后输入`cess start`命令启动Marker型TEE Worker。
 
+**请注意**：上述配置中"kaleido endpoint"代表您部署的TEE Worker的访问地址，TEE Worker运行后，您可以在运行存储矿工时将该地址加入到优先访问列表中，如使用CESS客户端配置存储矿工时，在"Enter the reserved TEE woker endpoints"中配置；如果您是直接手动运行的存储矿工，则请在存储矿工的配置文件中的"TeeList:"项中以列表形式进行配置。
+
 ## 工作原理
 
 Marker型TEE Worker工作原理如下图所示：
