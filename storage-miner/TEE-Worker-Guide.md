@@ -31,11 +31,14 @@
 
 ### 安装 CESS 客户端
 cess-nodeadm 是一个 CESS 节点部署和管理程序，有助于部署和管理存储节点、共识节点和全节点，以简化所有 CESS 矿工的开发运营。
-wget https://github.com/CESSProject/cess-nodeadm/archive/v0.5.1.tar.gz
+``` shell
+wget https://github.com/CESSProject/cess-nodeadm/archive/v0.5.x.tar.gz
 tar -xvf v0.5.x.tar.gz
 cd cess-nodeadm-0.5.x
 sudo ./install.sh
-请检查您是否使用的是最新版本的 cess-nodeadm。目前是 v0.5.x。
+```
+
+请检查您是否使用的是最新版本的 cess-nodeadm。目前是 v0.5.3。
 如果出现 Install cess nodeadm success 消息，则表示安装成功。
 如果安装失败，请查看故障排除步骤。
 
