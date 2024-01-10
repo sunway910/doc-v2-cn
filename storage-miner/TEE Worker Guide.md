@@ -25,7 +25,9 @@
 
 ## 操作指南
 
-​以 **Marker** 运行TEE Worker需要一个账户：即**Controller 帐户**，以及仅需一笔用于注册交易的Gas费。请参阅[创建 CESS 账户]()，及前往[CESS 水龙头](https://cess.cloud/faucet.html)获取 TCESS，或[联系我们]()获取 TCESS 代币进行质押。创建钱包帐户后，导航至[CESS 浏览器](https://testnet.cess.cloud/)。运行其他类型的TEE Worker请参考[共识节点部署指南]()。
+​以 **Marker** 运行TEE Worker需要一个账户：即**Controller 帐户**，以及仅需一笔用于注册交易的Gas费。请参阅[创建 CESS 账户](../community/cess-account.md)，及前往[CESS 水龙头](https://cess.cloud/faucet.html)获取 TCESS，或[联系我们](../introduction/contact.md)获取 TCESS 代币进行质押。
+
+创建钱包帐户后，导航至[CESS 浏览器](https://testnet.cess.cloud/)。运行其他类型的TEE Worker请参考[共识节点部署指南](../consensus-miner/running.md)。
 
 ### 安装 CESS 客户端
 cess-nodeadm 是一个 CESS 节点部署和管理程序，有助于部署和管理存储节点、共识节点和全节点，以简化所有 CESS 矿工的开发运营。
