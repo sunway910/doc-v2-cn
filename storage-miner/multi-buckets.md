@@ -1,10 +1,13 @@
 # Architecture
 
 多存储节点架构如下所示:
+- watchTower: 当本地的 bucket 镜像与官方的 bucket 镜像有差异时，watchtower会自动拉取官方的新镜像，在创建一个新的 bucket 容器后删除旧的 bucket 容器
+- bucket: 存储节点，多个存储节点之间会进行 P2P 通信，在示例配置文件中配置的通信端口为：15001、15002
+- chain: 链节点，存储节点默认通过链节点的 9944 端口获取区块信息；链节点之间默认通过 30336 端口进行数据同步
 
 ![多存储节点架构](../assets/storage-miner/multi-buckets/multibucket.png)
 
-# 一键安装多个存储节点
+# 方法一：一键安装多个存储节点
 
 ## 1. 下载并安装 multibucket 管理客户端
 
@@ -16,8 +19,23 @@ sudo bash ./install.sh
 ```
 
 ## 2. 自定义配置文件
+{% hint style="info" %}
+安装完成后, 用户需要根据实际需求修改文件: `/opt/cess/multibucket-admin/config.yaml`
+{% endhint %}
 
-成功执行 `sudo bash ./install.sh` 后, 默认的配置文件生成在: `/opt/cess/multibucket-admin/config.yaml`
+- UseSpace: 存储节点的存储能力，单位为 GB
+- UseCpu: 存储节点使用的逻辑核心数
+- port: 存储节点 P2P 通信端口，每个存储节点的端口必须不同且没有被其他服务占用
+- diskPath: 存储节点工作的系统绝对路径，需要在该路径下挂载文件系统
+- earningsAcc: 收入账户， [如何获取账户和助记词](https://docs.cess.cloud/core/v/zh/storage-miner/running#zhun-bei-cess-zhang-hu)
+- stakingAcc: 质押 TCESS 的付款账户，每提供 1T 的存储空间需要质押 4000 个 TCESS
+- mnemonic: 账户助记词，由 12 个单词组成，每个存储节点需要提供不同的助记词
+- chainWsUrl: 默认通过本地的 RPC 节点进行存储节点之间的数据同步，`buckets[].chainWsUrl` 的优先级高于 `node.chainWsUrl`
+- backupChainWsUrls: 备用 RPC 节点，可以使用官方提供的 RPC 节点或者你所知的其他 RPC 节点，`buckets[].backupChainWsUrls` 的优先级高于 `node.backupChainWsUrls`
+
+{% hint style="warning" %}
+你可以通过 lvm 的方式在一块硬盘上创建多个虚拟逻辑卷，将多个虚拟逻辑卷挂载在不同的 diskPath 上，但当该硬盘损坏时，所有依赖 lvm 的存储节点都出现故障 !
+{% endhint %}
 
    ```yaml
    ## node configurations template
@@ -29,7 +47,7 @@ sudo bash ./install.sh
       # default chain url for bucket, this config will be overwritten in buckets[] as below
       chainWsUrl: "ws://127.0.0.1:9944/"
       # default backup chain urls for bucket, this config will be overwritten in buckets[] as below
-      backupChainWsUrls: ["wss://testnet-rpc0.cess.cloud/ws/", "wss://testnet-rpc1.cess.cloud/ws/", "wss://testnet-rpc2.cess.cloud/ws/"]
+      backupChainWsUrls: ["wss://testnet-rpc0.cess.cloud/ws/", "wss://testnet-rpc1.cess.cloud/ws/", "wss://testnet-rpc2.cess.cloud/ws/", "wss://testnet-rpc3.cess.cloud/ws/"]
 
    ## chain configurations
    ## set option: '--skip-chain' or '-s' to skip installing chain
@@ -63,7 +81,7 @@ sudo bash ./install.sh
         # a directory mount with filesystem
         diskPath: "/mnt/cess_storage1"
         # The rpc endpoint of the chain
-        # `official chain: wss://testnet-rpc0.cess.cloud/ws/ wss://testnet-rpc1.cess.cloud/ws/ wss://testnet-rpc2.cess.cloud/ws/`
+        # `official chain: wss://testnet-rpc0.cess.cloud/ws/ wss://testnet-rpc1.cess.cloud/ws/ wss://testnet-rpc2.cess.cloud/ws/`, "wss://testnet-rpc3.cess.cloud/ws/"
         chainWsUrl: "ws://127.0.0.1:9944/"
         backupChainWsUrls: []
         # Priority tee list address
@@ -92,7 +110,7 @@ sudo bash ./install.sh
         # a directory mount with filesystem
         diskPath: "/mnt/cess_storage2"
         # The rpc endpoint of the chain
-        # `official chain: wss://testnet-rpc0.cess.cloud/ws/ wss://testnet-rpc1.cess.cloud/ws/ wss://testnet-rpc2.cess.cloud/ws/`
+        # `official chain: wss://testnet-rpc0.cess.cloud/ws/ wss://testnet-rpc1.cess.cloud/ws/ wss://testnet-rpc2.cess.cloud/ws/`, "wss://testnet-rpc3.cess.cloud/ws/"
         chainWsUrl: "ws://127.0.0.1:9944/"
         backupChainWsUrls: []
         # Priority tee list address
@@ -101,36 +119,131 @@ sudo bash ./install.sh
            - "127.0.0.1:8081"
         # Bootstrap Nodes
         Boot: "_dnsaddr.boot-bucket-testnet.cess.cloud"
-
    ```
 
-## 3. 生成配置文件并一键安装多个存储节点
-
-- 每一个存储节点的配置文件会生成在其对应挂载路径的 `bucket` 目录下
-- docker-compose.yaml 生成在路径： `/opt/cess/multibucket-admin/build/docker-compose.yaml`
+## 3. 生成配置文件
+执行以下命令会根据文件：`/opt/cess/multibucket-admin/config.yaml` 去生成每个存储节点的配置文件 `config.yaml` 和 `docker-compose.yaml` 配置文件
 
   ```bash
-  sudo cess-multibucket-admin config generate && sudo cess-multibucket-admin install
+  sudo cess-multibucket-admin config generate
   ```
 
-## 4. 卸载
+- 每一个存储节点的配置文件会生成在其对应挂载路径的 `bucket` 目录下，如存储节点 `bucket_1` 的配置文件生成在： `/mnt/cess_storage1/bucket/config.yaml`
+- docker-compose.yaml 文件生成在路径： `/opt/cess/multibucket-admin/build/docker-compose.yaml`
 
-停止某个服务
+{% hint style="warning" %}
+除非自定义了配置文件的路径，否则以： `/opt/cess/multibucket-admin/config.yaml` 为准
+{% endhint %}
+
+## 4. 一键安装多个存储节点
+
+### 启动所有服务
+启动 watchTower、multi-buckets、rpc 服务
+  ```bash
+  sudo cess-multibucket-admin install
+  ```
+
+### 跳过安装本地 RPC 节点
+如果配置文件中配置了官方的 RPC 节点或其他已知的 RPC 节点，可以通过 `--skip-chain` 跳过启动本地的 RPC 节点
+
+  ```bash
+  sudo cess-multibucket-admin install --skip-chain
+  ```
+
+## 5. 常用操作
+
+**停止某个服务**，如 `sudo cess-multibucket-admin stop bucket_1` 停止存储节点：`bucket_1`
 ```bash
   sudo cess-multibucket-admin stop $1
 ```
 
-停止所有服务
+**停止所有服务**
 ```bash
   sudo cess-multibucket-admin stop
 ```
 
-停止所有服务并删除相关镜像
+**停止所有服务并删除相关镜像**
 ```bash
   sudo cess-multibucket-admin down
 ```
 
-# 依次安装多个存储节点
+**重启所有服务**
+```bash
+  sudo cess-multibucket-admin restart
+```
+
+**重启某个服务**，如 `sudo cess-multibucket-admin reload bucket_1` 重新运行存储节点：`bucket_1`
+```bash
+  sudo cess-multibucket-admin restart $1
+```
+
+**查看版本相关信息**
+```bash
+  sudo cess-multibucket-admin version
+```
+
+**查看服务状态**
+```bash
+  sudo cess-multibucket-admin status
+```
+
+**重新拉取镜像**
+```bash
+  sudo cess-multibucket-admin pullimg
+```
+
+**查看当前磁盘使用情况**
+```bash
+  sudo cess-multibucket-admin tools space-info
+```
+
+**查看存储桶状态**
+```bash
+  sudo cess-multibucket-admin buckets stat
+```
+
+**增加质押**
+```bash
+  sudo cess-multibucket-admin buckets increase staking <deposit amount>
+```
+
+**撤回质押**
+
+当您的节点**退出 CESS 网络**（见下文）后，运行以下命令撤回质押：
+```bash
+  sudo cess-multibucket-admin buckets withdraw
+```
+
+**查询奖励信息**
+```bash
+  udo cess-multibucket-admin buckets reward
+```
+
+**领取奖励**
+```bash
+  sudo cess-multibucket-admin buckets claim
+```
+
+**更新收入账户**
+```bash
+  sudo cess-multibucket-admin buckets update earnings [earnings account]
+```
+
+**退出 CESS 网络**
+```bash
+  sudo cess-multibucket-admin buckets exit
+```
+
+**移除现有的服务**
+
+{% hint style="warning" %}
+除非 CESS 网络已重新部署且确认数据可以清除，否则请勿执行此操作。
+{% endhint %}
+```bash
+  sudo cess-multibucket-admin purge
+```
+
+# 方法二：依次安装多个存储节点
 
 ## 1. 准备 RPC 节点
 
