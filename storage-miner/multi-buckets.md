@@ -7,14 +7,149 @@
 
 ![多存储节点架构](../assets/storage-miner/multi-buckets/multibucket.png)
 
+# 服务器要求
+
+最低配置需求：
+
+| 资源 | 规格 |
+| --- | --- |
+| 推荐操作系统 | Linux 64 位英特尔/AMD |
+| CPU 核心数 | ≥4 |
+| 内存 | ≥8GB |
+| 带宽 | ≥5Mbps |
+| 公网 IP | 必需 |
+| Linux 内核版本 | 5.11 或更高版本 |
+
+每个存储节点至少需要 4GB 内存和 1 个逻辑核，链节点至少需要 2GB 内存和 1 个逻辑核
+
+如同时运行 2 个存储节点以及 1 个链节点，则至少需要 10GB 内存和 3 个逻辑核
+
 # 方法一：一键安装多个存储节点
+
+## 存储环境需求
+
+执行安装操作对当前运行环境中的存储环境有一定的需求，需要根据**磁盘数量的不同**进行不同的配置
+
+### 多盘环境
+
+如下图所示，其中 `/dev/sda` 为系统盘，`/dev/sdb`，`/dev/sdc` 为数据盘，用户可以直接在数据盘上进行分区并创建文件系统，最后将文件系统挂载至存储节点的工作目录即可。
+
+![Multi Disk](../assets/storage-miner/multi-buckets/multi-disk-env.png)
+
+```bash
+fdisk /dev/sdb
+
+# 2048: 新磁盘的起始扇区通常设为2048，这样可以确保分区边界与硬盘的物理扇区对齐，提高硬盘的读写效率
+# the value after default: 默认为最大扇区值，即对整个磁盘进行分区。
+
+Enter and press Enter:
+n
+p
+1
+2048
+the value after default
+w
+
+# 在 /dev/vdb 上创建文件系统
+sudo mkfs.ext4 /dev/sdb
+
+Proceed anyway? (y,N) y
+
+# 创建存储节点的工作目录
+sudo mkdir /cess_storage1
+
+# 挂载文件系统至该目录
+sudo mount /dev/sdb /cess_storage1
+
+# 配置文件系统开机自动挂载
+sudo cp /etc/fstab /etc/fstab.bak
+sudo sh -c "echo `blkid /dev/sdb | awk '{print $2}' | sed 's/\"//g'` /cess_storage1 ext4 defaults 0 0 >> /etc/fstab"
+```
+重复以上步骤为 `/dev/sdc` 进行分区并创建文件系统，然后将其挂载至文件目录：`/cess_storage2`
+
+{% hint style="warning" %}
+在一块磁盘划分为多个分区的情况下，当磁盘损坏时，将影响所有使用其分区进行工作的存储节点
+{% endhint %}
+
+### 单盘环境
+该操作步骤适用于只有一块系统盘的环境
+
+#### 场景1：
+
+如下所示，在只有 1 块 50GB 系统盘的情况下， 磁盘 `/dev/sda` 的分区 `/dev/sda3` 的 `Last sector 扇区值` 已经是最大值（50GB的磁盘已经不能再分出多余的存储空间）。
+```bash
+[root@cess ~]# lsblk 
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda    253:0    0   50G  0 disk 
+├─sda1 253:1    0    2M  0 part 
+├─sda2 253:2    0  200M  0 part /boot/efi
+└─sda3 253:3    0 49.8G  0 part /
+```
+如上所示，`/dev/sda3` 已经将 50GB 存储空间占满，且当前系统正在使用这个分区，所以无法通过修改分区来搭建多存储节点所需的运行环境。
+
+如果分区未占满整块磁盘，仍有剩余存储空间可供分区，则可参考 **多盘环境** 的配置方法进行分区配置，在这种环境下，多个存储节点的运行都将依赖于这块磁盘
+
+#### 场景2：
+
+如下图所示，当前环境仅有一块存储空间约为 1.8T的 `/dev/nvme0n1` 系统盘，这块系统盘进行了 3 次分区 ，包括 `/dev/nvme0n1p1`、`/dev/nvme0n1p2` 和 `/dev/nvme0n1p3`
+当前系统的运行依赖于在第 3 个分区 `/dev/nvme0n1p3` 中创建的虚拟逻辑盘 `/dev/ubuntu-vg/ubuntu-lv`，由于该虚拟逻辑盘仅占用了 100GB 存储空间，所以可通过 lvm 在剩余空间上创建多个虚拟逻辑卷的方式来配置多存储节点的运行环境
+
+![Single Disk](../assets/storage-miner/multi-buckets/single-disk-env.png)
+
+```bash
+# 使用 vgs 命令查看当前卷组，可以发现当前卷组名称为： ubuntu-vg，VFree显示了当前卷组的剩余存储空间
+$ vgs
+cess@cess:/home/cess# vgs
+  VG        #PV #LV #SN Attr   VSize   VFree
+  ubuntu-vg   1   1   0 wz--n- <1.82t  1.7T
+
+# 使用 lvcreate 命令从卷组：ubuntu-vg 中创建一个 100GB 大小且名为 cess_storage 的虚拟逻辑卷
+$ sudo lvcreate -L 100g -n cess_storage ubuntu-vg -y
+# 使用 lvcreate 命令从卷组：ubuntu-vg 的所有剩余空间中创建一个名为 cess_storage 的虚拟逻辑卷
+# sudo lvcreate -l 100%FREE -n cess_storage ubuntu-vg -y
+
+# lvdisplay 查看创建成功的虚拟逻辑卷，名称: cess_storage、路径: /dev/ubuntu-vg/cess_storage
+$ sudo lvdisplay
+root@cess:/home/cess# lvdisplay
+  --- Logical volume ---
+  LV Path                /dev/ubuntu-vg/ubuntu-lv
+  LV Name                ubuntu-lv
+  VG Name                ubuntu-vg
+  LV UUID                zxJiPj-Anon-CG3r-XEIJ-Nydi-xxxx-U6oWqW
+  LV Size                100.00 GiB
+   
+  --- Logical volume ---
+  LV Path                /dev/ubuntu-vg/cess_storage
+  LV Name                cess_storage
+  VG Name                ubuntu-vg
+  LV UUID                33Z2eL-AVma-oV4V-1vnE-G3YC-xxxx-wtzxHs
+  LV Size                <1.72 TiB
+
+# 创建文件系统
+$ sudo mkfs.ext4 /dev/ubuntu-vg/cess_storage
+
+# 创建目录
+sudo mkdir /cess
+
+# 挂载文件系统至该目录
+sudo mount /dev/ubuntu-vg/cess_storage /cess
+
+# 配置开机自动挂载
+sudo cp /etc/fstab /etc/fstab.bak
+# 修改 lv路径、文件目录、文件系统类型
+sudo sh -c "echo `blkid /dev/ubuntu-vg/cess_storage | awk '{print $2}' | sed 's/\"//g'` /cess ext4 defaults 0 0 >> /etc/fstab"
+```
+
+{% hint style="warning" %}
+用户可以通过 lvm 的方式在一块硬盘上创建多个虚拟逻辑卷，将多个虚拟逻辑卷挂载在不同的 diskPath 上，但当该硬盘损坏时，所有依赖 lvm 的存储节点都将发生异常 !
+{% endhint %}
 
 ## 1. 下载并安装 multibucket 管理客户端
 
 ```bash
-sudo wget https://github.com/CESSProject/cess-multibucket-admin/archive/v0.0.1.tar.gz
-sudo tar -xvf v0.0.1.tar.gz
-cd cess-multibucket-admin-0.0.1
+sudo wget https://github.com/CESSProject/cess-multibucket-admin/archive/latest.tar.gz
+sudo tar -xvf latest.tar.gz
+cd cess-multibucket-admin-latest
 sudo bash ./install.sh
 ```
 
@@ -32,10 +167,6 @@ sudo bash ./install.sh
 - mnemonic: 账户助记词，由 12 个单词组成，每个存储节点需要提供不同的助记词
 - chainWsUrl: 默认通过本地的 RPC 节点进行存储节点之间的数据同步，`buckets[].chainWsUrl` 的优先级高于 `node.chainWsUrl`
 - backupChainWsUrls: 备用 RPC 节点，可以使用官方提供的 RPC 节点或者你所知的其他 RPC 节点，`buckets[].backupChainWsUrls` 的优先级高于 `node.backupChainWsUrls`
-
-{% hint style="warning" %}
-你可以通过 lvm 的方式在一块硬盘上创建多个虚拟逻辑卷，将多个虚拟逻辑卷挂载在不同的 diskPath 上，但当该硬盘损坏时，所有依赖 lvm 的存储节点都出现故障 !
-{% endhint %}
 
    ```yaml
    ## node configurations template
@@ -207,13 +338,6 @@ sudo bash ./install.sh
   sudo cess-multibucket-admin buckets increase staking <deposit amount>
 ```
 
-**撤回质押**
-
-当您的节点**退出 CESS 网络**（见下文）后，运行以下命令撤回质押：
-```bash
-  sudo cess-multibucket-admin buckets withdraw
-```
-
 **查询奖励信息**
 ```bash
   udo cess-multibucket-admin buckets reward
@@ -229,16 +353,23 @@ sudo bash ./install.sh
   sudo cess-multibucket-admin buckets update earnings [earnings account]
 ```
 
+{% hint style="warning" %}
+退出 CESS 网络的过程将持续一段时间，中途强制退出会导致存储节点被惩罚
+{% endhint %}
+
 **退出 CESS 网络**
 ```bash
   sudo cess-multibucket-admin buckets exit
 ```
 
-**移除现有的服务**
+**撤回质押**
 
-{% hint style="warning" %}
-除非 CESS 网络已重新部署且确认数据可以清除，否则请勿执行此操作。
-{% endhint %}
+当您的节点**退出 CESS 网络**后，运行以下命令撤回质押：
+```bash
+  sudo cess-multibucket-admin buckets withdraw
+```
+
+**清理配置文件**
 ```bash
   sudo cess-multibucket-admin purge
 ```
@@ -503,8 +634,8 @@ services:
 
 ```yaml
     volumes: #Mapping of host disk to container
-      - '/mnt/disk0/bucket:/opt/bucket' #Node configuration directory
-      - '/mnt/disk0/storage/:/opt/bucket-disk' #Node working directory
+       - '/mnt/disk0/bucket:/opt/bucket' #Node configuration directory
+       - '/mnt/disk0/storage/:/opt/bucket-disk' #Node working directory
 ```
 
 其中 `/mnt/disk0/bucket/` 是之前创建好的存放节点 0 配置文件的目录，里面有 `config.yaml`。`/mnt/disk0/storage/` 是之前创建好的存储节点 0 用于工作的工作目录；
