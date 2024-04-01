@@ -56,18 +56,18 @@ sudo mkfs.ext4 /dev/sdb
 Proceed anyway? (y,N) y
 
 # 创建存储节点的工作目录
-sudo mkdir /cess_storage1
+sudo mkdir /mnt/cess_storage1
 
 # 挂载文件系统至该目录
-sudo mount /dev/sdb /cess_storage1
+sudo mount /dev/sdb /mnt/cess_storage1
 
 # 配置文件系统开机自动挂载
 sudo cp /etc/fstab /etc/fstab.bak
 
-# 修改 </dev/sdb> </cess_storage1>
-sudo sh -c "echo `blkid /dev/sdb | awk '{print $2}' | sed 's/\"//g'` /cess_storage1 ext4 defaults 0 0 >> /etc/fstab"
+# 修改 <磁盘: /dev/sdb> <挂载路径: /mnt/cess_storage1>
+sudo sh -c "echo `blkid /dev/sdb | awk '{print $2}' | sed 's/\"//g'` /mnt/cess_storage1 ext4 defaults 0 0 >> /etc/fstab"
 ```
-重复以上步骤为 `/dev/sdc` 进行分区并创建文件系统，然后将其挂载至文件目录：`/cess_storage2`
+重复以上步骤为 `/dev/sdc` 进行分区并创建文件系统，然后将其挂载至文件目录：`/mnt/cess_storage2`
 
 {% hint style="warning" %}
 在一块磁盘划分为多个分区的情况下，当磁盘损坏时，将影响所有使用其分区进行工作的存储节点
@@ -398,4 +398,24 @@ sudo bash ./install.sh
 **清理配置文件**
 ```bash
   sudo cess-multibucket-admin purge
+```
+
+## 6. 更新客户端
+
+执行以下命令更新本地客户端:
+
+```bash
+cd /tmp
+sudo wget https://github.com/CESSProject/cess-multibucket-admin/archive/latest.tar.gz
+sudo tar -xvf latest.tar.gz
+cd cess-multibucket-admin-latest
+sudo bash ./install.sh --no-rmi --retain-config --skip-dep --keep-running
+```
+
+选项:
+```text
+    -n | --no-rmi              不删除旧的镜像文件
+    -r | --retain-config       保留旧的配置文件
+    -s | --skip-dep            跳过依赖安装
+    -k | --keep-running        保持当前存储节点的运行
 ```
