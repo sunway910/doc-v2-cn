@@ -349,7 +349,7 @@ sudo bash ./install.sh
 
 **查询奖励信息**
 ```bash
-  udo cess-multibucket-admin buckets reward
+  sudo cess-multibucket-admin buckets reward
 ```
 
 **领取所有节点奖励**
