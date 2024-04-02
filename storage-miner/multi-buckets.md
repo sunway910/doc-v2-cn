@@ -305,7 +305,7 @@ sudo bash ./install.sh
   sudo cess-multibucket-admin restart
 ```
 
-**重启某个服务**，如 `sudo cess-multibucket-admin reload bucket_1` 重新运行存储节点：`bucket_1`
+**重启某个服务**，如 `sudo cess-multibucket-admin restart bucket_1` 重新运行存储节点：`bucket_1`
 ```bash
   sudo cess-multibucket-admin restart <bucket name>
 ```
@@ -364,7 +364,7 @@ sudo bash ./install.sh
 
 **更新所有收入账户**
 ```bash
-  sudo cess-multibucket-admin buckets update earnings [earnings account]
+  sudo cess-multibucket-admin buckets update earnings <earnings account>
 ```
 
 {% hint style="warning" %}
