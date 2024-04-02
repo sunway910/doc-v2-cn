@@ -143,7 +143,7 @@ sudo sh -c "echo `blkid /dev/ubuntu-vg/cess_storage | awk '{print $2}' | sed 's/
 ```
 
 {% hint style="warning" %}
-用户可以通过 lvm 的方式在一块硬盘上创建多个虚拟逻辑卷，将多个虚拟逻辑卷挂载在不同的 diskPath 上，但当该硬盘损坏时，所有依赖 lvm 的存储节点都将发生异常 !
+用户可以通过 lvm 的方式在一块硬盘上创建多个虚拟逻辑卷，将多个虚拟逻辑卷挂载在不同的 diskPath 上，但当该硬盘损坏时，所有依赖 lvm 的存储节点都将被影响 !
 {% endhint %}
 
 ## 1. 下载并安装 multibucket 管理客户端
@@ -160,15 +160,15 @@ sudo bash ./install.sh
 安装完成后, 用户需要根据实际需求修改文件: `/opt/cess/multibucket-admin/config.yaml`
 {% endhint %}
 
-- UseSpace: 存储节点的存储能力，单位为 GB
-- UseCpu: 存储节点使用的逻辑核心数
-- port: 存储节点 P2P 通信端口，每个存储节点的端口必须不同且没有被其他服务占用
-- diskPath: 存储节点工作的系统绝对路径，需要在该路径下挂载文件系统
+- UseSpace: 存储节点的存储能力，单位为 GB。
+- UseCpu: 存储节点使用的逻辑核心数。
+- port: 存储节点 P2P 通信端口，每个存储节点的端口必须不同且没有被其他服务占用。
+- diskPath: 存储节点工作的系统绝对路径，需要在该路径下挂载文件系统。
 - earningsAcc: 收入账户， [如何获取账户和助记词](https://docs.cess.cloud/core/v/zh/storage-miner/running#zhun-bei-cess-zhang-hu)
-- stakingAcc: 质押 TCESS 的付款账户，每提供 1T 的存储空间需要质押 4000 个 TCESS
-- mnemonic: 账户助记词，由 12 个单词组成，每个存储节点需要提供不同的助记词
-- chainWsUrl: 默认通过本地的 RPC 节点进行存储节点之间的数据同步，`buckets[].chainWsUrl` 的优先级高于 `node.chainWsUrl`
-- backupChainWsUrls: 备用 RPC 节点，可以使用官方提供的 RPC 节点或者你所知的其他 RPC 节点，`buckets[].backupChainWsUrls` 的优先级高于 `node.backupChainWsUrls`
+- stakingAcc: 质押 TCESS 的付款账户，每提供 1T 的存储空间需要质押 4000 个 TCESS。 删除该配置将默认使用收入账户进行质押。
+- mnemonic: 账户助记词，由 12 个单词组成，每个存储节点需要提供不同的助记词。
+- chainWsUrl: 默认通过本地的 RPC 节点进行存储节点之间的数据同步，`buckets[].chainWsUrl` 的优先级高于 `node.chainWsUrl`。
+- backupChainWsUrls: 备用 RPC 节点，可以使用官方提供的 RPC 节点或者你所知的其他 RPC 节点，`buckets[].backupChainWsUrls` 的优先级高于 `node.backupChainWsUrls`。
 
    ```yaml
    ## node configurations template
@@ -217,10 +217,6 @@ sudo bash ./install.sh
         # `official chain: wss://testnet-rpc0.cess.cloud/ws/ wss://testnet-rpc1.cess.cloud/ws/ wss://testnet-rpc2.cess.cloud/ws/`, "wss://testnet-rpc3.cess.cloud/ws/"
         chainWsUrl: "ws://127.0.0.1:9944/"
         backupChainWsUrls: []
-        # Priority tee list address
-        TeeList:
-           - "127.0.0.1:8080"
-           - "127.0.0.1:8081"
         # Bootstrap Nodes
         Boot: "_dnsaddr.boot-bucket-testnet.cess.cloud"
         
@@ -246,10 +242,6 @@ sudo bash ./install.sh
         # `official chain: wss://testnet-rpc0.cess.cloud/ws/ wss://testnet-rpc1.cess.cloud/ws/ wss://testnet-rpc2.cess.cloud/ws/`, "wss://testnet-rpc3.cess.cloud/ws/"
         chainWsUrl: "ws://127.0.0.1:9944/"
         backupChainWsUrls: []
-        # Priority tee list address
-        TeeList:
-           - "127.0.0.1:8080"
-           - "127.0.0.1:8081"
         # Bootstrap Nodes
         Boot: "_dnsaddr.boot-bucket-testnet.cess.cloud"
    ```
